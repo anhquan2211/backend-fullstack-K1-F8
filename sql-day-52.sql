@@ -1,38 +1,17 @@
 -- DAY 52 FULLSTACK K1
-
--- Create database
-CREATE DATABASE database_01_anhquan
-
--- Tạo bảng courses
-CREATE TABLE courses(
-    id INT NOT NULL,
-    name VARCHAR(50) NOT NULL,
-    price FLOAT,
-    detail TEXT,
-    teacher_id INT NOT NULL,
-    active INT,
-    created_at  TIMESTAMP with TIME ZONE,
-    updated_at  TIMESTAMP with TIME ZONE
-);
-
 -- Thêm trường description trước trường detail với kiểu dữ liệu và ràng buộc sau: TEXT, NULL
 
+-- Add the column without specifying its position;
 ALTER TABLE courses ADD COLUMN description TEXT;
 
--- Đổi tên trường detail thành content và ràng buộc chuyển thành NOT NULL
+-- Set the position of the new column after the 'price' column;
+ALTER TABLE courses ALTER COLUMN description SET POSITION AFTER price;
+
+-- Đổi tên trường detail thành content và ràng buộc chuyển thành NOT NULL;
 ALTER TABLE courses RENAME COLUMN detail TO content;
 ALTER TABLE courses ALTER COLUMN description SET NOT NULL;
 
--- Tạo bảng teacher
-CREATE TABLE teacher(
-    id INT NOT NULL,
-	name VARCHAR(50) NOT NULL,
-	bio TEXT,
-	created_at TIMESTAMP with TIME ZONE,
-	updated_at TIMESTAMP with TIME ZONE
-);
-
--- Thêm 3 giảng viên vào bảng teacher, mỗi giảng viên thêm 3 khóa học
+-- Thêm 3 giảng viên vào bảng teacher, mỗi giảng viên thêm 3 khóa học;
 INSERT INTO teacher(name, bio, created_at, updated_at)
 VALUES ('Teacher 1', 'Bio Teacher 1', NOW(), NOW());
 
@@ -69,11 +48,7 @@ VALUES ('Course 8', 80000, 'This is description of course 8', 'This is content o
 INSERT INTO courses(name, price, description, content, teacher_id, active, created_at, updated_at)
 VALUES ('Course 9', 90000, 'This is description of course 9', 'This is content of course 9', 3, 1, NOW(), NOW());
 
--- Sửa tên và giá từng khóa học thành tên mới và giá mới (Tên khóa học, giá khóa học các khóa học không được giống nhau)
-
-ALTER TABLE courses
-ADD CONSTRAINT name_price_courses_unique UNIQUE (name, price);
-
+-- Sửa tên và giá từng khóa học thành tên mới và giá mới (Tên khóa học, giá khóa học các khóa học không được giống nhau);
 UPDATE courses SET name='Course 1 Update', price=10001, updated_at=NOW() WHERE id = 1;
 UPDATE courses SET name='Course 2 Update', price=20001, updated_at=NOW() WHERE id = 2;
 UPDATE courses SET name='Course 3 Update', price=30001, updated_at=NOW() WHERE id = 3;
@@ -84,16 +59,12 @@ UPDATE courses SET name='Course 7 Update', price=70001, updated_at=NOW() WHERE i
 UPDATE courses SET name='Course 8 Update', price=80001, updated_at=NOW() WHERE id = 8;
 UPDATE courses SET name='Course 9 Update', price=90001, updated_at=NOW() WHERE id = 9;
 
--- Sửa lại bio của từng giảng viên (Bio từng giảng viên không được giống nhau)
-
-ALTER TABLE teacher
-ADD CONSTRAINT bio_teacher_unique UNIQUE (bio);
-
+-- Sửa lại bio của từng giảng viên (Bio từng giảng viên không được giống nhau);
 UPDATE teacher SET bio='Bio Teacher 1 Update', updated_at=NOW() WHERE id = 1;
 UPDATE teacher SET bio='Bio Teacher 2 Update', updated_at=NOW() WHERE id = 2;
 UPDATE teacher SET bio='Bio Teacher 3 Update', updated_at=NOW() WHERE id = 3;
 
--- Hiển thị danh sách giảng viên, danh sách khóa học
+-- Hiển thị danh sách giảng viên, danh sách khóa học;
 SELECT * FROM teacher;
 SELECT * FROM courses;
 
