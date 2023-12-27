@@ -6,7 +6,7 @@ CREATE DATABASE "database_02_LuuAnhQuan"
     CONNECTION LIMIT = -1
     IS_TEMPLATE = False;
 	
--- Tạo bảng users quản lý người dùng.
+-- Tạo bảng users quản lý người dùng;
 CREATE TABLE public.users
 (
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY,
@@ -20,7 +20,7 @@ CREATE TABLE public.users
         INCLUDE(phone, email)
 );
 
--- Tạo bảng orders chứa data tất cả đơn hàng của user
+-- Tạo bảng orders chứa data tất cả đơn hàng của user;
 CREATE TABLE public.orders
 (
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY,
@@ -38,7 +38,7 @@ CREATE TABLE public.orders
         NOT VALID
 );
 
--- Tạo bảng customers để lưu thông tin của người dùng khi đã đặt hàng thành công, tránh trường hợp xoá user.
+-- Tạo bảng customers để lưu thông tin của người dùng khi đã đặt hàng thành công, tránh trường hợp xoá user;
 CREATE TABLE public.customers
 (
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY,
@@ -58,7 +58,7 @@ CREATE TABLE public.customers
         NOT VALID
 );
 
--- Tạo bảng products quản lý sản phẩm
+-- Tạo bảng products quản lý sản phẩm;
 CREATE TABLE public.products
 (
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY,
@@ -70,7 +70,7 @@ CREATE TABLE public.products
     PRIMARY KEY (id)
 );
 
--- Tạo bảng order_detail chứa chi tiết 1 đơn hàng của user
+-- Tạo bảng order_detail chứa chi tiết 1 đơn hàng của user;
 CREATE TABLE public.order_detail
 (
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY,
@@ -93,7 +93,7 @@ CREATE TABLE public.order_detail
         NOT VALID
 );
 
--- Tạo bảng product_order_detail chứa dữ liệu sản phẩm khi đặt hàng thành công tránh trường hợp xoá product hoặc thay đổi giá của 1 product.
+-- Tạo bảng product_order_detail chứa dữ liệu sản phẩm khi đặt hàng thành công tránh trường hợp xoá product hoặc thay đổi giá của 1 product;
 CREATE TABLE public.product_order_detail
 (
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY,
@@ -111,7 +111,7 @@ CREATE TABLE public.product_order_detail
         NOT VALID
 );
 
--- Thêm data vào bảng users
+-- Thêm data vào bảng users;
 INSERT INTO users(name, phone, email)
 VALUES('user 1', '0978039745', 'user1@gmail.com');
 
@@ -121,7 +121,7 @@ VALUES('user 2', '0978039746', 'user2@gmail.com');
 INSERT INTO users(name, phone, email)
 VALUES('user 3', '0978039747', 'user3@gmail.com');
 
--- Thêm data vào bảng products
+-- Thêm data vào bảng products;
 INSERT INTO products(name, code, price)
 VALUES('product 1', '0001', 10000);
 
@@ -146,18 +146,18 @@ VALUES('product 7', '0007', 70000);
 INSERT INTO products(name, code, price)
 VALUES('product 8', '0008', 80000);
 
--- Thêm data vào bảng orders
+-- Thêm data vào bảng orders;
 INSERT INTO orders(user_id, total_price, status)
 VALUES(1, 30000 ,'Đã thanh toán');
 
 INSERT INTO orders(user_id, total_price, status)
 VALUES(2, 40000 ,'Đang giao hàng');
 
--- Thêm data vào bảng customers
+-- Thêm data vào bảng customers;
 INSERT INTO customers(order_id, name, email)
 VALUES(1, 'user 1', 'user1@gmail.com');
 
--- Thêm data vào bảng order_detail
+-- Thêm data vào bảng order_detail;
 INSERT INTO order_detail(order_id, product_id, name, amount)
 VALUES(1, 1, 'product 1', 6);
 
@@ -167,7 +167,7 @@ VALUES(1, 2, 'product 2', 7);
 INSERT INTO order_detail(order_id, product_id, name, amount)
 VALUES(1, 3, 'product 3', 10);
 
--- Thêm data vào bảng product_order_detail
+-- Thêm data vào bảng product_order_detail;
 INSERT INTO product_order_detail(order_detail_id, name, code, price)
 VALUES(1, 'product 1', '0001', '10000');
 
@@ -177,22 +177,22 @@ VALUES(2, 'product 2', '0002', '20000');
 INSERT INTO product_order_detail(order_detail_id, name, code, price)
 VALUES(3, 'product 3', '0003', '30000');
 
--- Xem danh sách đơn hàng
+-- Xem danh sách đơn hàng;
 SELECT 
     customers.name AS "Tên khách hàng",
     customers.email AS "Email khách hàng",
     customers.phone AS "Số điện thoại khách hàng",
-    SUM(orders.total_amount) AS "Tổng số lượng sản phẩm",
-    SUM(orders.total_price) AS "Tổng tiền đơn hàng",
+    orders.total_amount AS "Tổng số lượng sản phẩm",
+    orders.total_price AS "Tổng tiền đơn hàng",
     orders.status AS "Trạng thái đơn hàng",
     orders.created_at AS "Thời gian đặt hàng"
 FROM orders
-JOIN customers ON orders.id = customers.order_id
-JOIN order_detail ON orders.id = order_detail.order_id
-JOIN products ON order_detail.product_id = products.id
+INNER JOIN customers ON orders.id = customers.order_id
+INNER JOIN order_detail ON orders.id = order_detail.order_id
+INNER JOIN products ON order_detail.product_id = products.id
 GROUP BY orders.id, customers.name, customers.email, customers.phone, orders.status, orders.created_at;
 
---
+-- Xem chi tiết đơn hàng;
 SELECT
     customers.name AS "Tên khách hàng",
     customers.email AS "Email khách hàng",
@@ -205,13 +205,13 @@ SELECT
     orders.status AS "Trạng thái đơn hàng",
     orders.created_at AS "Thời gian tạo đơn hàng",
     orders.updated_at AS "Thời gian cập nhật cuối cùng"
-FROM
+INNER JOIN
     public.orders 
-JOIN
+INNER JOIN
     public.customers ON orders.id = customers.order_id
-JOIN
+INNER JOIN
     public.order_detail ON orders.id = order_detail.order_id
-JOIN
+INNER JOIN
     public.products ON order_detail.product_id = products.id;
 
 
