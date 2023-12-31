@@ -61,31 +61,31 @@ ALTER TABLE "CHI_TIET_SU_DUNG_DV" ADD FOREIGN KEY ("MaDV") REFERENCES "DICH_VU_D
 
 
 INSERT INTO "PHONG"("MaPhong", "LoaiPhong", "SoKhachToiDa", "GiaPhong")
-VALUES  ('P0001', 'loai 1', 20, 60000),
-		('P0002', 'loai 2', 25, 80000),
-		('P0003', 'loai 3', 15, 50000),
-		('P0004', 'loai 4', 20, 50000)
+VALUES  ('P0001', 'Loai 1', 20, 60000),
+		('P0002', 'Loai 2', 25, 80000),
+		('P0003', 'Loai 3', 15, 50000),
+		('P0004', 'Loai 4', 20, 50000)
 ;
 		
 INSERT INTO "KHACH_HANG"("MaKH", "TenKH", "DiaChi", "SoDT")
-VALUES  ('KH0001', 'nguyen van a', 'hoa xuan', '1111111111'),
-		('KH0002', 'nguyen van b', 'hoa hai', '1111111112'),
-		('KH0003', 'nguyen van c', 'cam le', '11111111113'),
-		('KH0004', 'nguyen van d', 'Hoa xuan', '1111111114')
+VALUES  ('KH0001', 'Nguyen Van A', 'Hoa Xuan', '1111111111'),
+		('KH0002', 'Nguyen Van B', 'Hoa Hai', '1111111112'),
+		('KH0003', 'Nguyen Van C', 'Cam Le', '11111111113'),
+		('KH0004', 'Nguyen Van D', 'Hoa Xuan', '1111111114')
 ;
 
 INSERT INTO "DICH_VU_DI_KEM"("MaDV", "TenDV", "DonViTinh", "DonGia")
-VALUES  ('DV001', 'beer', 'ion', 10000),
-		('DV002', 'nuoc ngot', 'ion', 8000),
+VALUES  ('DV001', 'beer', 'lon', 10000),
+		('DV002', 'nuoc ngot', 'lon', 8000),
 		('DV003', 'trai cay', 'dia', 35000),
 		('DV004', 'khan uot', 'cai', 2000)		
 ;
 
 INSERT INTO "DAT_PHONG"("MaDatPhong", "MaPhong", "MaKH", "NgayDat", "GioBatDau", "GioKetThuc", "TienDatCoc", "TrangThaiDat")
-VALUES	('DP0001', 'P0001', 'KH0002', TO_DATE('26/03/2018','DD/MM/YYYY'), '11:00', '13:30', 100000 , 'da dat'),
-		('DP0002', 'P0001', 'KH0003', TO_DATE('27/03/2018','DD/MM/YYYY'), '17:15', '19:15', 50000 , 'da huy'),
-		('DP0003', 'P0002', 'KH0002', TO_DATE('26/03/2018','DD/MM/YYYY'), '20:30', '22:15', 100000 , 'da dat'),
-		('DP0004', 'P0003', 'KH0001', TO_DATE('01/04/2018','DD/MM/YYYY'), '19:30', '21:15', 200000 , 'da dat')
+VALUES	('DP0001', 'P0001', 'KH0002', TO_DATE('26/03/2018','DD/MM/YYYY'), '11:00', '13:30', 100000 , 'Da Dat'),
+		('DP0002', 'P0001', 'KH0003', TO_DATE('27/03/2018','DD/MM/YYYY'), '17:15', '19:15', 50000 , 'Da Huy'),
+		('DP0003', 'P0002', 'KH0002', TO_DATE('26/03/2018','DD/MM/YYYY'), '20:30', '22:15', 100000 , 'Da Dat'),
+		('DP0004', 'P0003', 'KH0001', TO_DATE('01/04/2018','DD/MM/YYYY'), '19:30', '21:15', 200000 , 'Da Dat')
 ;
 
 INSERT INTO "CHI_TIET_SU_DUNG_DV"("MaDatPhong", "MaDV", "SoLuong")
