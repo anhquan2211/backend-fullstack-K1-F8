@@ -10,8 +10,11 @@
           class="form-control"
           id="exampleInputName"
           placeholder="Tên..."
-          value="<%= user.name %>"
+          value="<%= req?.old?.name === '' ? req?.old?.name :  user.name %>"
         />
+        <%- req?.errors?.name ? `<span class="text-danger"
+        >${req?.errors?.name}</span
+      >`: '' %>
         
       </div>
       <div class="mb-3">
@@ -22,8 +25,15 @@
           class="form-control"
           id="exampleInputEmail1"
           placeholder="Email..."
-          value="<%= user.email %>"
+          value="<%= req?.old?.email === '' ? req?.old?.email :  user.email %>"
         />
+        <%- req?.errors?.email ? `<span class="text-danger"
+        >${req?.errors?.email}</span
+      >`: '' %>
+
+        <% if (emailErrorsText) { %>
+          <div class="text text-danger mt-3"><%= emailErrorsText.email %></div>
+        <% } %>
         
       </div>
       <div class="mb-3">

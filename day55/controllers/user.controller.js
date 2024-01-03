@@ -66,7 +66,11 @@ module.exports = {
         return res.status(404).send("User not found");
       }
 
-      res.render("users/edit", { req, user });
+      const emailErrors = req.flash("emailErrors");
+
+      const emailErrorsText = emailErrors[0];
+
+      res.render("users/edit", { req, user, emailErrorsText });
     } catch (error) {
       return res.status(500).send("Error fetching user details");
     }
@@ -79,8 +83,8 @@ module.exports = {
         .required("Email bắt buộc phải nhập")
         .email("Email không đúng định dạng"),
     });
+    const userId = req.params.id;
     try {
-      const userId = req.params.id;
       const { name, email, status } = req.body;
 
       await schema.validate({ name, email }, { abortEarly: false });
@@ -90,13 +94,29 @@ module.exports = {
         return res.status(404).send("User not found");
       }
 
-      await userModel.update(userId, { name, email, status });
+      if (existingUser.email === email) {
+        await userModel.update(userId, { name, email, status });
+      } else {
+        const isEmailUnique = await userModel.checkEmail(email, userId);
+        if (!isEmailUnique) {
+          req.flash("emailErrors", { email: "Email đã được sử dụng" });
+          return res.redirect(`/users/edit/${userId}`);
+        }
+        await userModel.update(userId, { name, email, status });
+      }
 
       req.flash("msg", "Sửa người dùng thành công");
 
       return res.redirect("/users");
-    } catch (error) {
-      return res.status(400).send("Error updating user information");
+    } catch (e) {
+      if (e?.inner) {
+        const errors = Object.fromEntries(
+          e.inner.map((item) => [item.path, item.message])
+        );
+        req.flash("errors", errors);
+      }
+      req.flash("old", req.body);
+      return res.redirect(`/users/edit/${userId}`);
     }
   },
 

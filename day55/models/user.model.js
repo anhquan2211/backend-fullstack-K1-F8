@@ -19,10 +19,23 @@ module.exports = {
 
     return sql`SELECT * FROM users ${filter} ORDER BY created_at DESC`;
   },
+
   emailUnique: async (email) => {
     const result = await sql`SELECT id FROM users WHERE email=${email}`;
     return result.length ? false : true;
   },
+
+  checkEmail: async (email, userId = null) => {
+    let query = sql`SELECT COUNT(*) AS count FROM users WHERE LOWER(email) = LOWER(${email})`;
+
+    if (userId) {
+      query = sql`${query} AND id <> ${userId}`;
+    }
+
+    const [{ count }] = await query;
+    return count === 0;
+  },
+
   create: async (data) => {
     const { name, email, status } = data;
     const result = await sql`
@@ -32,10 +45,12 @@ module.exports = {
 
     return result;
   },
+
   findById: async (id) => {
     const [user] = await sql`SELECT * FROM users WHERE id = ${id}`;
     return user;
   },
+
   update: async (id, updatedUserData) => {
     const { name, email, status } = updatedUserData;
 
@@ -48,6 +63,7 @@ module.exports = {
     RETURNING *;`;
     return result[0];
   },
+
   delete: async (id) => {
     const result = await sql`DELETE FROM users WHERE id = ${id}`;
     return result;
