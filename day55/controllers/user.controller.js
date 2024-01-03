@@ -70,6 +70,8 @@ module.exports = {
 
       const emailErrorsText = emailErrors[0];
 
+      console.log(req);
+
       res.render("users/edit", { req, user, emailErrorsText });
     } catch (error) {
       return res.status(500).send("Error fetching user details");
@@ -98,6 +100,7 @@ module.exports = {
         await userModel.update(userId, { name, email, status });
       } else {
         const isEmailUnique = await userModel.checkEmail(email, userId);
+        console.log(isEmailUnique);
         if (!isEmailUnique) {
           req.flash("emailErrors", { email: "Email đã được sử dụng" });
           return res.redirect(`/users/edit/${userId}`);

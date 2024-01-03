@@ -33,7 +33,7 @@ module.exports = {
     }
 
     const [{ count }] = await query;
-    return count === 0;
+    return +count === 0;
   },
 
   create: async (data) => {
