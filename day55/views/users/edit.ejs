@@ -1,0 +1,41 @@
+<div class="">
+    <h1>Sửa người dùng</h1>
+  
+    <form method="post">
+      <div class="mb-3">
+        <label for="exampleInputName" class="form-label">Name</label>
+        <input
+          type="name"
+          name="name"
+          class="form-control"
+          id="exampleInputName"
+          placeholder="Tên..."
+          value="<%= user.name %>"
+        />
+        
+      </div>
+      <div class="mb-3">
+        <label for="exampleInputEmail1" class="form-label">Email address</label>
+        <input
+          type="text"
+          name="email"
+          class="form-control"
+          id="exampleInputEmail1"
+          placeholder="Email..."
+          value="<%= user.email %>"
+        />
+        
+      </div>
+      <div class="mb-3">
+        <label for="disabledSelect" class="form-label">Status</label>
+        <select id="disabledSelect" class="form-select" name="status">
+          <option value="0" <%= user.status ? '' : 'selected' %>>Chưa kích hoạt</option>
+          <option value="1" <%= user.status ? 'selected' : '' %>>Kích hoạt</option>
+        </select>
+      </div>
+  
+      <button type="submit" class="btn btn-primary">Lưu</button>
+      <a href="/users" class="btn btn-danger">Quay lại</a>
+    </form>
+  </div>
+  

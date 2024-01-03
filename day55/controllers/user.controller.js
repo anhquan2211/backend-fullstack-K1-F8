@@ -1,0 +1,121 @@
+const userModel = require("../models/user.model");
+const moment = require("moment");
+const { object, string } = require("yup");
+module.exports = {
+  index: async (req, res) => {
+    const { status, keyword } = req.query;
+    let statusBool;
+    if (status === "active" || status === "inactive") {
+      statusBool = status === "active" ? true : false;
+    }
+
+    //Đọc dữ liệu từ database
+    const users = await userModel.all(statusBool, keyword);
+    const msg = req.flash("msg");
+
+    res.render("users/index", { users, moment, status, keyword, msg });
+  },
+
+  add: (req, res) => {
+    // const errors = req.flash("errors");
+
+    res.render("users/add", { req });
+  },
+
+  handleAdd: async (req, res) => {
+    const schema = object({
+      name: string().required("Tên bắt buộc phải nhập"),
+      email: string()
+        .required("Email bắt buộc phải nhập")
+        .email("Email không đúng định dạng")
+        .test("unique", "Email đã tồn tại trên hệ thống", async (value) => {
+          const isUnique = await userModel.emailUnique(value);
+          return isUnique;
+        }),
+    });
+    try {
+      const body = await schema.validate(req.body, { abortEarly: false });
+
+      body.status = body.status === "1" ? true : false;
+
+      await userModel.create(body);
+
+      req.flash("msg", "Thêm người dùng thành công");
+
+      return res.redirect("/users");
+    } catch (e) {
+      if (e?.inner) {
+        const errors = Object.fromEntries(
+          e.inner.map((item) => [item.path, item.message])
+        );
+        req.flash("errors", errors);
+      }
+      req.flash("old", req.body);
+    }
+
+    return res.redirect("/users/add");
+  },
+
+  edit: async (req, res) => {
+    const userId = req.params.id;
+
+    try {
+      const user = await userModel.findById(userId);
+
+      if (!user) {
+        return res.status(404).send("User not found");
+      }
+
+      res.render("users/edit", { req, user });
+    } catch (error) {
+      return res.status(500).send("Error fetching user details");
+    }
+  },
+
+  handleEdit: async (req, res) => {
+    const schema = object({
+      name: string().required("Tên bắt buộc phải nhập"),
+      email: string()
+        .required("Email bắt buộc phải nhập")
+        .email("Email không đúng định dạng"),
+    });
+    try {
+      const userId = req.params.id;
+      const { name, email, status } = req.body;
+
+      await schema.validate({ name, email }, { abortEarly: false });
+
+      const existingUser = await userModel.findById(userId);
+      if (!existingUser) {
+        return res.status(404).send("User not found");
+      }
+
+      await userModel.update(userId, { name, email, status });
+
+      req.flash("msg", "Sửa người dùng thành công");
+
+      return res.redirect("/users");
+    } catch (error) {
+      return res.status(400).send("Error updating user information");
+    }
+  },
+
+  destroy: async (req, res) => {
+    const userId = req.params.id;
+
+    try {
+      const existingUser = await userModel.findById(userId);
+      if (!existingUser) {
+        return res.status(404).send("User not found");
+      }
+
+      await userModel.delete(userId);
+
+      req.flash("msg", "Xoá người dùng thành công");
+
+      return res.redirect("/users");
+    } catch (error) {
+      return res.status(500).send("Error deleting user");
+    }
+  },
+};
