@@ -14,7 +14,7 @@ module.exports = {
     if (keyword?.length) {
       filter = sql`${filter} AND (LOWER(name) LIKE ${
         "%" + keyword + "%"
-      } OR LOWER(email) LIKE ${"%" + keyword + "%"})`;
+      } OR LOWER(email) LIKE LOWER(${"%" + keyword + "%"}))`;
     }
 
     return sql`SELECT * FROM users ${filter} ORDER BY created_at DESC`;
