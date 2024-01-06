@@ -1,0 +1,11 @@
+<div class="d-flex justify-content-center flex-column">
+  <% if (success?.length) { %>
+  <div class="alert alert-success text-center"><%= success %></div>
+  <% } %>
+  <h1>Trang chủ</h1>
+
+  <p>Chào bạn: <%= userLogin?.name %></p>
+  <form action="/auth/logout" method="post">
+    <button class="btn btn-primary">Đăng xuất</button>
+  </form>
+</div>
