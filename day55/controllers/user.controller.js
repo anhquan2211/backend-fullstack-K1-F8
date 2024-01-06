@@ -92,19 +92,24 @@ module.exports = {
       await schema.validate({ name, email }, { abortEarly: false });
 
       const existingUser = await userModel.findById(userId);
+
       if (!existingUser) {
         return res.status(404).send("User not found");
       }
 
+      //Nếu email không thay đổi gì thì vẫn cập nhật như bình thường.
       if (existingUser.email === email) {
         await userModel.update(userId, { name, email, status });
       } else {
+        //Check email đã tồn tại trong hệ thống nếu user sửa email đã có trong hệ thống.
         const isEmailUnique = await userModel.checkEmail(email, userId);
-        console.log(isEmailUnique);
+
         if (!isEmailUnique) {
           req.flash("emailErrors", { email: "Email đã được sử dụng" });
+
           return res.redirect(`/users/edit/${userId}`);
         }
+        //Nếu email đã thay đổi và không trùng với email nào trong db thì cập nhật.
         await userModel.update(userId, { name, email, status });
       }
 

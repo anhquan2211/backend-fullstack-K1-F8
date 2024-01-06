@@ -17,7 +17,7 @@ module.exports = {
       } OR LOWER(email) LIKE LOWER(${"%" + keyword + "%"}))`;
     }
 
-    return sql`SELECT * FROM users ${filter} ORDER BY created_at DESC`;
+    return sql`SELECT * FROM users ${filter} ORDER BY created_at DESC, id DESC`;
   },
 
   emailUnique: async (email) => {
