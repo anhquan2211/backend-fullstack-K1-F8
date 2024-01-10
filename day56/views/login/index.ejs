@@ -6,6 +6,8 @@
     <div class="alert alert-danger text-center"><%= failed %></div>
     <% } %> <% if (success?.length) { %>
     <div class="alert alert-success text-center"><%= success[0] %></div>
+    <% } %> <% if (msg?.length) { %>
+    <div class="alert alert-success text-center"><%= msg[0] %></div>
     <% } %>
 
     <form action="" method="post">
@@ -39,6 +41,10 @@
 
       <div class="d-grid">
         <button type="submit" class="btn btn-primary">Đăng nhập</button>
+      </div>
+
+      <div class="text-center mt-3">
+        <p>Do not have an account? <a href="/auth/register">Register</a></p>
       </div>
     </form>
   </div>
