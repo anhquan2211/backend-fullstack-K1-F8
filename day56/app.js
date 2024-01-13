@@ -6,12 +6,16 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 
+const useragent = require("express-useragent");
+
 const expressLayouts = require("express-ejs-layouts");
 const authMiddleware = require("./middlewares/auth.middleware");
 const guestMiddleware = require("./middlewares/guest.middleware");
 const validateMessage = require("./middlewares/validate.message");
 
 var app = express();
+
+app.use(useragent.express());
 
 const session = require("express-session");
 const flash = require("connect-flash");

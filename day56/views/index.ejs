@@ -4,7 +4,16 @@
   <% } %>
   <h1>Trang chủ</h1>
 
-  <p>Chào bạn: <%= userLogin?.name %></p>
+  <p>Chào bạn: <%= userInfor?.name %></p>
+
+  <div class="mb-3">
+    <a href="/users/info">Thông tin cá nhân</a>
+  </div>
+
+  <div class="mb-3">
+    <a href="/users/password">Đổi mật khẩu</a>
+  </div>
+
   <form action="/auth/logout" method="post">
     <button class="btn btn-primary">Đăng xuất</button>
   </form>

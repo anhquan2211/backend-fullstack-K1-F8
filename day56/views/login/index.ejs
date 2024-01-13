@@ -10,7 +10,7 @@
     <div class="alert alert-success text-center"><%= msg[0] %></div>
     <% } %>
 
-    <form action="" method="post">
+    <form id="loginForm" action="" method="post">
       <div class="mb-3">
         <label for="">Email</label>
         <input
@@ -49,3 +49,22 @@
     </form>
   </div>
 </div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document
+      .getElementById("loginForm")
+      .addEventListener("submit", function (event) {
+        const platform = navigator.platform;
+
+        // Add a hidden input field to the form to send the platform information
+        const platformInput = document.createElement("input");
+        platformInput.type = "hidden";
+        platformInput.name = "platform";
+        platformInput.value = platform;
+
+        // Append the hidden input to the form
+        this.appendChild(platformInput);
+      });
+  });
+</script>

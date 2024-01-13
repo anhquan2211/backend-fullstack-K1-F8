@@ -1,7 +1,9 @@
 "use strict";
 const { Model } = require("sequelize");
+
+const User = Model.User;
 module.exports = (sequelize, DataTypes) => {
-  class User extends Model {
+  class Device extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -9,43 +11,50 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      User.hasMany(models.Device, {
-        foreignKey: "user_id",
-      });
+      Device.belongsTo(models.User, { foreignKey: "user_id" });
     }
   }
-  User.init(
+  Device.init(
     {
       id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
       },
-      name: DataTypes.STRING(50),
-      email: {
-        type: DataTypes.STRING(100),
-        unique: true,
+      name: DataTypes.STRING(255),
+      time_login: {
+        type: DataTypes.DATE,
+        allowNull: false,
       },
-      password: {
-        type: DataTypes.STRING(100),
-      },
-      sessionVersion: {
+      user_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        defaultValue: 1, // Set a default value if needed
+        references: {
+          model: "users", // Assuming your users table is named 'users'
+          key: "id",
+        },
+      },
+      last_active: {
+        type: DataTypes.DATE,
       },
       token: {
+        type: DataTypes.STRING(255),
+      },
+      status: {
+        type: DataTypes.BOOLEAN,
+      },
+      browser: {
         type: DataTypes.STRING(255),
       },
     },
     {
       sequelize,
-      modelName: "User",
+      modelName: "Device",
       timestamps: true,
-      tableName: "users",
+      tableName: "devices",
       createdAt: "created_at",
       updatedAt: "updated_at",
     }
   );
-  return User;
+  return Device;
 };

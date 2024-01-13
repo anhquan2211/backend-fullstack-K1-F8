@@ -1,0 +1,53 @@
+<div class="row justify-content-center">
+  <div class="col-6">
+    <h2 class="text-center">Chỉnh sửa thông tin cá nhân</h2>
+
+    <% if (success?.length) { %>
+    <div class="alert alert-success text-center"><%= success %></div>
+    <% } %>
+
+    <form action="" method="post">
+      <div class="mb-3">
+        <label for="">Họ và tên</label>
+        <input
+          type="text"
+          name="name"
+          class="form-control"
+          placeholder="Name..."
+          value="<%= userInfo.name %>"
+        />
+        <%- req.errors?.name ? `<span class="text-danger"
+          >${req.errors?.name}</span
+        >`: '' %>
+      </div>
+
+      <div class="mb-3">
+        <label for="">Email</label>
+        <input
+          type="email"
+          name="email"
+          class="form-control"
+          placeholder="Email..."
+          value="<%= userInfo.email %>"
+        />
+        <%- req.errors?.email ? `<span class="text-danger"
+          >${req.errors?.email}</span
+        >`: '' %>
+      </div>
+
+      <form action="/users/infor" method="post">
+        <div class="d-grid">
+          <button type="submit" class="btn btn-primary">Lưu thông tin</button>
+        </div>
+      </form>
+
+      <div class="text-center mt-3">
+        <a href="/users/password">Đổi mật khẩu</a>
+      </div>
+
+      <div class="text-center mt-3">
+        <a href="/">Quay lại trang chủ</a>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,82 @@
+<div class="row justify-content-center">
+  <div class="col-6">
+    <h2 class="text-center">Thay đổi mật khẩu</h2>
+
+    <form action="" method="post">
+      <div class="mb-3">
+        <label for="">Mật khẩu cũ</label>
+        <input
+          type="password"
+          name="password"
+          class="form-control"
+          placeholder="Mật khẩu cũ..."
+          value="<%= req.old?.password %>"
+        />
+        <%- req.errors?.password ? `<span class="text-danger"
+          >${req.errors?.password}</span
+        >`: '' %>
+      </div>
+
+      <div class="mb-3">
+        <label for="">Mật khẩu mới</label>
+        <input
+          type="password"
+          id="newPassword"
+          name="newPassword"
+          class="form-control"
+          placeholder="Mật khẩu mới..."
+          value="<%= req.old?.newPassword %>"
+        />
+        <%- req.errors?.newPassword ? `<span class="text-danger"
+          >${req.errors?.newPassword}</span
+        >`: '' %>
+      </div>
+
+      <div class="mb-3">
+        <label for="">Nhập lại mật khẩu mới</label>
+        <input
+          type="password"
+          id="newPasswordRepeat"
+          name="newPasswordRepeat"
+          class="form-control"
+          placeholder="Nhập lại mật khẩu mới..."
+          value="<%= req.old?.newPasswordRepeat %>"
+          oninput="comparePassword()"
+        />
+        <%- req.errors?.newPasswordRepeat ? `<span class="text-danger"
+          >${req.errors?.newPasswordRepeat}</span
+        >`: '' %>
+        <span id="passwordError" class="text-danger"></span>
+      </div>
+
+      <form action="/user/infor" method="post">
+        <div class="d-grid">
+          <button type="submit" class="btn btn-primary btn-save">Lưu</button>
+        </div>
+      </form>
+
+      <div class="text-center mt-3">
+        <a href="/">Quay lại trang chủ</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script type="text/javascript">
+  function comparePassword() {
+    const password = document.getElementById("newPassword").value;
+    const passwordRepeat = document.getElementById("newPasswordRepeat").value;
+    const passwordError = document.getElementById("passwordError");
+    const btnSave = document.querySelector(".btn-save");
+
+    if (password !== passwordRepeat) {
+      passwordError.textContent = "Mật khẩu chưa trùng khớp";
+      btnSave.disabled = true;
+      btnSave.style.cursor = "none";
+    } else {
+      passwordError.textContent = "";
+      btnSave.disabled = false;
+      btnSave.style.cursor = "pointer";
+    }
+  }
+</script>

@@ -1,27 +1,14 @@
 const bcrypt = require("bcrypt");
+const { v4: uuidv4 } = require("uuid");
 
-const { User } = require("../models");
+const { User, Device } = require("../models");
 const { object, string, ref } = require("yup");
+const useragent = require("useragent");
 const validate = require("../utils/validate");
-
-const hashPassword = async (password) => {
-  const hash = await bcrypt.hash(password, 10);
-  return hash;
-};
 
 module.exports = {
   index: async (req, res) => {
     try {
-      //   const hashedPassword = await hashPassword("12345678");
-
-      //Tạo mới user vào db
-      //   await User.create({
-      //     name: "Quoc Anh",
-      //     email: "quocanh@gmail.com",
-      //     password: hashedPassword,
-      //   });
-
-      //   res.send("User created successfully");
       const failed = req.flash("failed");
       const success = req.flash("success");
       const msg = req.flash("msg");
@@ -42,7 +29,7 @@ module.exports = {
       password: string().required("Mật khẩu bắt buộc phải nhập"),
     });
 
-    const { email, password } = req.body;
+    const { email, password, platform } = req.body;
 
     try {
       const body = await schema.validate(req.body, { abortEarly: false });
@@ -63,13 +50,75 @@ module.exports = {
         //Successful login
         req.session.userLogin = user.dataValues;
         req.session.login = true;
+        req.session.userInfor = user;
+        req.session.userId = user.dataValues.id;
+
+        const token = uuidv4();
+
+        const userAgentInfo = useragent.parse(req.headers["user-agent"]);
+
+        // Check if the device already exists
+        const existingDevices = await Device.findAll({
+          where: { user_id: user.id, status: true },
+        });
+
+        if (existingDevices && existingDevices.length > 0) {
+          let tokenMatch = false;
+
+          // Update all existing devices
+          for (const existingDevice of existingDevices) {
+            if (existingDevice.token === token) {
+              // Token matches, update the existing device
+              await Device.update(
+                {
+                  last_active: new Date(),
+                  status: true,
+                },
+                { where: { id: existingDevice.id } }
+              );
+
+              tokenMatch = true;
+              break;
+            }
+          }
+
+          // If no matching token found, create a new device
+          if (!tokenMatch) {
+            await Device.create({
+              name: platform,
+              browser: userAgentInfo.source,
+              user_id: user.id,
+              time_login: new Date(),
+              last_active: new Date(),
+              token,
+              status: true,
+            });
+          }
+        } else {
+          // Create a new record for the current device
+          await Device.create({
+            name: platform,
+            browser: userAgentInfo.source,
+            user_id: user.id,
+            time_login: new Date(),
+            last_active: new Date(),
+            token,
+            status: true,
+          });
+        }
+
+        req.session.deviceToken = token;
+        res.cookie("__Secure_token", token, { httpOnly: true });
         req.flash("success", "Đăng nhập thành công");
+        return res.redirect("/");
       } else {
+        console.log(1111);
         req.flash("failed", "Email hoặc mật khẩu không chính xác!");
         req.flash("old", req.body);
         return res.redirect("/auth/login");
       }
     } catch (e) {
+      console.log("hahahahahahaha", e);
       const errors = Object.fromEntries(
         e?.inner.map((item) => [item.path, item.message])
       );
@@ -147,47 +196,30 @@ module.exports = {
       req.flash("old", req.body);
     }
     return res.redirect("/auth/register");
-    // const result = validationResult(req);
-    // if (result.isEmpty()) {
-    //   const { name, email, password, status } = req.body;
-    //   const userExist = await User.findOne({ where: { email } });
-    //   if (userExist === null) {
-    //     const saltRounds = 10;
-    //     bcrypt.hash(password, saltRounds, async function (err, hash) {
-    //       try {
-    //         await User.create({
-    //           name,
-    //           email,
-    //           password: hash,
-    //           status: status === "active",
-    //         });
-    //       } catch (error) {
-    //         console.log(error);
-    //       }
-    //     });
-    //     req.flash("msg", "Đăng kí thành công");
-    //     return res.redirect("auth/login");
-    //   } else {
-    //     req.flash("old", req.body);
-    //     req.flash("checkEmail", "Email đã tồn tại!");
-    //     return res.redirect("auth/register");
-    //   }
-    // }
-    // req.flash("old", req.body);
-    // req.flash("errors", result.errors);
-    // req.flash("msg", "Đăng kí thất bại");
-    // return res.redirect("/register");
   },
 
   logout: async (req, res) => {
-    // delete req.session.userLogin;
-    // console.log(req.session.userLogin);
+    const { userLogin, deviceToken } = req.session;
 
-    // req.flash("success", "Đăng xuất thành công");
-    // return res.redirect("/auth/login");
+    if (!userLogin) {
+      return res.redirect("/auth/login");
+    }
 
+    // Update the device status to false
+    await Device.update(
+      { status: false },
+      { where: { user_id: userLogin.id, token: deviceToken } }
+    );
+
+    // Clear session and cookie
     delete req.session.userLogin;
     delete req.session.login;
+    delete req.session.userInfor;
+    delete req.session.userId;
+    delete req.session.deviceToken;
+
+    res.clearCookie("__Secure_token");
+
     req.flash("success", "Đăng xuất thành công");
     return res.redirect("/auth/login");
   },
