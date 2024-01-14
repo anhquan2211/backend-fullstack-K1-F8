@@ -13,7 +13,7 @@ module.exports = {
       const success = req.flash("success");
       const msg = req.flash("msg");
 
-      res.render("login/index", { failed, req, success, msg });
+      return res.render("login/index", { failed, req, success, msg });
     } catch (error) {
       //   console.error("Error creating user:", error);
       //   res.status(500).send("Error creating user");
@@ -217,8 +217,6 @@ module.exports = {
     delete req.session.userInfor;
     delete req.session.userId;
     delete req.session.deviceToken;
-
-    res.clearCookie("__Secure_token");
 
     req.flash("success", "Đăng xuất thành công");
     return res.redirect("/auth/login");

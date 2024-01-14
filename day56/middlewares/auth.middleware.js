@@ -3,23 +3,53 @@ const { User, Device } = require("../models");
 module.exports = async (req, res, next) => {
   const { userLogin } = req.session;
 
+  console.log("userLogin in authMiddleware: ", userLogin);
+
+  const tokenCookie = req.cookies.__Secure_token;
+  console.log(tokenCookie);
+
   // If there is no userLogin session, or the user is not logged in, redirect to login
-  if (!userLogin) {
+  if (!userLogin || !tokenCookie) {
     res.clearCookie("__Secure_token");
     return res.redirect("/auth/login");
   }
 
-  // const user = await User.findByPk(userLogin.id);
+  const user = await User.findByPk(userLogin.id);
 
-  // if (!user) {
-  //   req.session.destroy();
+  if (!user) {
+    req.session.destroy();
+    res.clearCookie("__Secure_token");
+    return res.redirect("/auth/login");
+  }
+
+  // const tokenCookie = req.cookies.__Secure_token;
+
+  // if (!!tokenCookie) {
+  //   console.log("token undefined");
+  //   return res.redirect("/auth/login");
+  // }
+
+  const device = await Device.findOne({
+    where: {
+      user_id: userLogin.id,
+      token: tokenCookie,
+    },
+  });
+
+  console.log(device);
+
+  if (!device.status) {
+    res.clearCookie("__Secure_token");
+    return res.redirect("/auth/login");
+  }
+
+  // // If the device is not found or has status false, clear the cookie and redirect to login
+  // if (!device || !device.status) {
   //   res.clearCookie("__Secure_token");
   //   return res.redirect("/auth/login");
   // }
 
-  // const devices = await Device.findAll({
-  //   where: { user_id: user.id },
-  // });
+  // console.log(devices);
 
   // // Check if any device has a status of false
   // const hasInactiveDevice = devices.some((device) => !device.status);

@@ -23,23 +23,23 @@ module.exports = {
       return res.redirect("/auth/login");
     }
 
-    // Find devices associated with the user
-    const devices = await Device.findAll({
-      where: { user_id: user.id },
-    });
+    // // Find devices associated with the user
+    // const devices = await Device.findAll({
+    //   where: { user_id: user.id },
+    // });
 
-    // Check and update device statuses
-    for (const device of devices) {
-      if (device.token === userToken) {
-        // Set status to true for the device with the matching token
-        await Device.update({ status: true }, { where: { id: device.id } });
-      } else {
-        // Set status to false for devices with different tokens
-        await Device.update({ status: false }, { where: { id: device.id } });
-      }
-    }
+    // // Check and update device statuses
+    // for (const device of devices) {
+    //   if (device.token === userToken) {
+    //     // Set status to true for the device with the matching token
+    //     await Device.update({ status: true }, { where: { id: device.id } });
+    //   } else {
+    //     // Set status to false for devices with different tokens
+    //     await Device.update({ status: false }, { where: { id: device.id } });
+    //   }
+    // }
 
-    res.render("index", { userInfor, success });
+    return res.render("index", { userInfor, success });
   },
 
   info: (req, res) => {
@@ -170,6 +170,7 @@ module.exports = {
       const user = await User.findByPk(userId);
 
       const tokenCookie = req.cookies.__Secure_token;
+      console.log("tokenCookie: ", tokenCookie);
 
       const devices = await Device.findAll({
         where: { user_id: userId, status: true },
@@ -201,12 +202,13 @@ module.exports = {
         delete req.session.userInfor;
         delete req.session.userId;
 
-        res.clearCookie("__Secure_token");
+        // res.clearCookie("__Secure_token");
 
         req.flash(
           "success",
           "Đổi mật khẩu thành công! Đã đăng xuất khỏi tất cả các thiết bị."
         );
+        // req.session.destroy();
         return res.redirect("/auth/login");
       } else {
         // If the current password doesn't match, display an error
