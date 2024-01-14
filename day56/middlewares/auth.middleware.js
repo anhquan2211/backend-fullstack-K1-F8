@@ -8,6 +8,27 @@ module.exports = async (req, res, next) => {
     res.clearCookie("__Secure_token");
     return res.redirect("/auth/login");
   }
+
+  const user = await User.findByPk(userLogin.id);
+
+  if (!user) {
+    req.session.destroy();
+    res.clearCookie("__Secure_token");
+    return res.redirect("/auth/login");
+  }
+
+  const devices = await Device.findAll({
+    where: { user_id: user.id },
+  });
+
+  // Check if any device has a status of false
+  const hasInactiveDevice = devices.some((device) => !device.status);
+
+  if (hasInactiveDevice) {
+    res.clearCookie("__Secure_token");
+    return res.redirect("/auth/login");
+  }
+
   next();
 
   //   const userId = userLogin.id;
