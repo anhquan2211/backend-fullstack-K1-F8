@@ -1,14 +1,43 @@
 const bcrypt = require("bcrypt");
 const model = require("../models/index");
 const { object, string, ref } = require("yup");
+const { Op } = require("sequelize");
 
 const User = model.User;
 const Device = model.Device;
 
 module.exports = {
-  index: (req, res) => {
+  index: async (req, res) => {
     const { userInfor } = req.session;
     const success = req.flash("success");
+
+    // Get the token from the cookie
+    const userToken = req.cookies.__Secure_token;
+
+    // Find the user in the database
+    const user = await User.findByPk(userInfor.id);
+
+    if (!user) {
+      req.session.destroy();
+      res.clearCookie("__Secure_token");
+      return res.redirect("/auth/login");
+    }
+
+    // Find devices associated with the user
+    const devices = await Device.findAll({
+      where: { user_id: user.id },
+    });
+
+    // Check and update device statuses
+    for (const device of devices) {
+      if (device.token === userToken) {
+        // Set status to true for the device with the matching token
+        await Device.update({ status: true }, { where: { id: device.id } });
+      } else {
+        // Set status to false for devices with different tokens
+        await Device.update({ status: false }, { where: { id: device.id } });
+      }
+    }
 
     res.render("index", { userInfor, success });
   },
@@ -17,8 +46,15 @@ module.exports = {
     const userInfo = req.session.userInfor;
     const success = req.flash("success");
     const errors = req.flash("errors");
+    const failed = req.flash("failed");
 
-    return res.render("infor/index", { userInfo, req, success, errors });
+    return res.render("infor/index", {
+      userInfo,
+      req,
+      success,
+      errors,
+      failed,
+    });
   },
 
   handleInfo: async (req, res, next) => {
@@ -39,7 +75,7 @@ module.exports = {
         return res.redirect("/auth/login");
       }
 
-      const device = await Device.findOne({
+      const device = await Device.findAll({
         where: { user_id: userId, status: true },
       });
 
@@ -49,17 +85,32 @@ module.exports = {
       }
 
       const tokenFromDatabase = device.token;
-      const tokenFromCookie = req.cookies.userToken;
+      const tokenFromCookie = req.cookies.__Secure_token;
 
       //Nếu như 2 token không giống nhau, phòng trường hợp người dùng sửa token ở cookie thì chuyển về trang đăng nhập luôn.
-      if (tokenFromDatabase !== tokenFromCookie) {
-        res.clearCookie("__Secure_token");
+      // if (tokenFromDatabase !== tokenFromCookie) {
+      //   console.log("token not match");
+      //   res.clearCookie("__Secure_token");
 
-        return res.redirect("/auth/login");
-      }
+      //   return res.redirect("/auth/login");
+      // }
 
       //Nếu như 2 token giống nhau thì cho cập nhật thông tin người dùng
       const { name, email } = req.body;
+
+      const userExist = await User.findOne({
+        where: {
+          email,
+          id: {
+            [Op.ne]: userId, // Exclude the current user ID
+          },
+        },
+      });
+
+      if (userExist) {
+        req.flash("failed", "Email đã tồn tại trong hệ thống!");
+        return res.redirect("/users/info");
+      }
 
       const body = await schema.validate(req.body, { abortEarly: false });
       const [status] = await User.update(

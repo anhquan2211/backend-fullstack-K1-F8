@@ -4,6 +4,8 @@
 
     <% if (success?.length) { %>
     <div class="alert alert-success text-center"><%= success %></div>
+    <% } %> <% if (failed?.length) { %>
+    <div class="alert alert-danger text-center"><%= failed %></div>
     <% } %>
 
     <form action="" method="post">
