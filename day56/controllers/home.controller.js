@@ -169,28 +169,39 @@ module.exports = {
 
       const user = await User.findByPk(userId);
 
-      const tokenCookie = req.cookies.userToken;
+      const tokenCookie = req.cookies.__Secure_token;
 
-      const device = await Device.findOne({
+      const devices = await Device.findAll({
         where: { user_id: userId, status: true },
       });
 
-      const tokenDeviceDatabase = device.token;
+      const tokenDeviceDatabase = devices.map((device) => device.token);
+      console.log("tokenDeviceDatabase", tokenDeviceDatabase);
 
       const passwordMatch = await bcrypt.compare(password, user.password);
+      console.log("passwordMatch", passwordMatch);
 
-      if (passwordMatch && tokenCookie === tokenDeviceDatabase) {
+      if (
+        passwordMatch &&
+        tokenDeviceDatabase.some((token) => tokenCookie.includes(token))
+      ) {
         const hashedPassword = await bcrypt.hash(newPassword, 10);
 
+        // Update user's password
         await User.update(
           { password: hashedPassword },
           { where: { id: userId } }
         );
 
+        // Set status to false for all devices
+        await Device.update({ status: false }, { where: { user_id: userId } });
+
         delete req.session.userLogin;
         delete req.session.login;
         delete req.session.userInfor;
         delete req.session.userId;
+
+        res.clearCookie("__Secure_token");
 
         req.flash(
           "success",
