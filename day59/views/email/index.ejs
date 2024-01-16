@@ -1,0 +1,79 @@
+<% if (msg?.length) { %>
+<div
+  id="toast-simple"
+  class="flex items-center w-[50%] max-w-xs p-4 space-x-4 rtl:space-x-reverse text-gray-500 bg-white divide-x rtl:divide-x-reverse divide-gray-200 rounded-lg shadow"
+  role="alert"
+>
+  <svg
+    class="w-5 h-5 text-blue-600 rotate-45"
+    aria-hidden="true"
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 18 20"
+  >
+    <path
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="m9 17 8 2L9 1 1 19l8-2Zm0 0V9"
+    />
+  </svg>
+  <div class="ps-4 text-sm font-normal"><%= msg[0] %></div>
+</div>
+<% } %>
+<section class="py-6 bg-stone-100 font-poppins rounded-md section-send-email">
+  <div
+    class="max-w-4xl px-4 py-4 mx-auto bg-white border shadow-sm rounded-md lg:py-4 md:px-6"
+  >
+    <div class="mb-10">
+      <h2 class="pb-2 mb-2 text-xl font-bold text-gray-800 md:text-3xl">
+        Send Email
+      </h2>
+    </div>
+    <form action="/send-email" class="" method="post">
+      <div class="mb-6">
+        <label for="" class="block mb-2 text-sm font-medium">Email To</label>
+        <input
+          type="email"
+          class="block w-full px-4 py-3 mb-2 text-sm bg-blue-200 border rounded placeholder-shown:text-sm input-text"
+          placeholder="Email to...."
+          name="emailSendTo"
+          value="anhq87958@gmail.com"
+          required
+        />
+      </div>
+      <div class="mb-6">
+        <label for="" class="block mb-2 text-sm font-medium">Subject</label>
+        <input
+          type="text"
+          placeholder="Subject..."
+          name="subject"
+          required
+          class="block w-full px-4 py-3 mb-3 leading-tight placeholder-gray-400 bg-blue-200 border rounded placeholder-shown:text-sm input-text"
+        />
+      </div>
+      <div class="mb-6">
+        <label for="" class="block mb-2 text-sm font-medium">Message</label>
+        <textarea
+          type="message"
+          placeholder="Message.."
+          name="message"
+          required
+          class="block w-full px-4 py-3 leading-tight placeholder-gray-400 bg-blue-200 border rounded placeholder-shown:text-sm input-text"
+        ></textarea>
+      </div>
+      <div class="flex items-center justify-between">
+        <button
+          class="px-4 py-2 text-base bg-blue-600 rounded text-white hover:bg-blue-400 hover:opacity-80 btn-history"
+          type="submit"
+        >
+          Send
+        </button>
+        <a class="bg-blue-500 px-4 btn-history" href="/send-email/history">
+          Email sent history
+        </a>
+      </div>
+    </form>
+  </div>
+</section>

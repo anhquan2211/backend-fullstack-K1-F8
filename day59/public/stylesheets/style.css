@@ -1,0 +1,124 @@
+@import url("https://fonts.googleapis.com/css?family=inter");
+
+body {
+  font-family: "Inter", sans-serif;
+  min-height: 100vh !important;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+textarea {
+  min-height: 120px;
+}
+
+input::placeholder,
+textarea::placeholder {
+  font-size: 14px !important;
+}
+
+.btn-history {
+  background-color: rgb(37, 99, 235);
+  color: white;
+  border-radius: 4px;
+  height: 40px !important;
+  line-height: 40px;
+  cursor: pointer;
+}
+
+.section-send-email {
+  min-height: calc(100vh - 297px - 74px) !important;
+}
+
+.input-text {
+  background-color: rgb(239 246 255) !important;
+  border: 1px solid #ccc !important;
+  resize: none;
+}
+
+.name-column {
+  padding-left: 24px;
+}
+
+.section-history {
+  min-height: calc(100vh - 297px - 74px) !important;
+}
+
+.status-true {
+  display: inline-block;
+  padding: 4px 8px;
+  color: rgb(29, 78, 216);
+  background-color: rgb(219 234 254);
+  border-radius: 9999px;
+}
+
+.status-seen {
+  display: inline-block;
+  padding: 4px 8px;
+  color: rgb(240 253 244);
+  background-color: rgb(74 222 128);
+  border-radius: 9999px;
+}
+
+.status-failed {
+  display: inline-block;
+  padding: 4px 8px;
+  color: rgb(220 38 38);
+  background-color: rgb(254 226 226);
+  border-radius: 9999px;
+}
+
+.view-detail:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.text-send {
+  color: rgb(59 130 246);
+}
+
+.text-send:hover {
+  text-decoration: underline;
+}
+
+.heading-history {
+  color: rgb(85, 123, 227);
+  font-size: 22px !important;
+  font-weight: 700;
+}
+
+.container-section-detail {
+  min-height: calc(100vh - 297px - 74px) !important;
+}
+
+.container-detail {
+  max-width: 900px;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  border-radius: 6px;
+}
+
+.heading-detail {
+  color: rgb(85, 123, 227);
+}
+
+#toast-simple {
+  max-width: 896px;
+  margin: 16px auto;
+  background-color: rgb(165 243 252);
+  color: blue;
+}
+
+.paginate-container {
+  gap: 4px;
+}
+
+.paginate-container li a:hover {
+  color: rgb(59 130 246);
+}
+
+.active {
+  color: rgb(37 99 235);
+  border-color: rgb(37 99 235);
+}
