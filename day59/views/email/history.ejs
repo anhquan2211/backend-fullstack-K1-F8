@@ -1,3 +1,27 @@
+<% if (msg?.length) { %>
+  <div
+    id="toast-simple"
+    class="flex items-center w-[50%] max-w-xs p-4 space-x-4 rtl:space-x-reverse text-gray-500 bg-white divide-x rtl:divide-x-reverse divide-gray-200 rounded-lg shadow"
+    role="alert"
+  >
+    <svg
+      class="w-5 h-5 text-blue-600 rotate-45"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 18 20"
+    >
+      <path
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="m9 17 8 2L9 1 1 19l8-2Zm0 0V9"
+      />
+    </svg>
+    <div class="ps-4 text-sm font-normal"><%= msg[0] %></div>
+  </div>
+  <% } %>
 <section
   class="items-center lg:flex bg-blue-100 lg:h-screen font-poppins section-history"
 >
@@ -11,9 +35,9 @@
       <table class="w-full table-auto">
         <thead class="bg-lightGray-50">
           <tr class="text-xs text-left text-gray-500 border-b border-gray-200">
-            <th class="flex items-center py-4 pl-6 font-medium name-column">
-              <input class="mr-4" type="checkbox" name="" id="" />
-              <span class="ml-4">Email To</span>
+            <th class="flex items-center py-4 pl-16 font-medium name-column">
+              
+              <span class="ml-10 email-to">Email To</span>
             </th>
             <th class="px-6 py-4 font-medium">Subject</th>
             <th class="py-4 font-medium">Status</th>
@@ -24,7 +48,11 @@
           <% emails.forEach(item => { %>
           <tr class="border-b border-gray-200">
             <td class="flex items-center px-6 py-3 font-medium">
-              <input class="mr-4" type="checkbox" name="" id="" />
+              <form action="/send-email/email-history/destroy/<%= item?.id %>" method="post" onsubmit="return confirm('Do you want delete this email?')">
+                <button  class="trash-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="16" width="14" viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"/></svg>
+                </button>
+              </form>
               <div class="flex">
                 <div>
                   <p class="text-sm font-medium"><%= item?.email_to %></p>
@@ -56,67 +84,69 @@
         <div class="custom-paginate">
           <div class="justify-center flex-1 py-6 mx-auto lg:py-4">
             <div class="flex justify-center">
-              <ul class="flex items-center space-x-1 paginate-container">
-                <li>
-                  <% if (page > 1) { %>
-                  <a
-                    href="?page=<%= +page-1 %>"
-                    class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 rounded hover:text-blue-500"
-                  >
-                    <span class="sr-only">Previous</span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      fill="currentColor"
-                      class="w-5 h-5 mr-2 bi bi-arrow-left"
-                      viewBox="0 0 16 16"
+              <% if (totalPage > 1) { %>
+                <ul class="flex items-center space-x-1 paginate-container">
+                  <li>
+                    <% if (page > 1) { %>
+                    <a
+                      href="?page=<%= +page-1 %>"
+                      class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 rounded hover:text-blue-500"
                     >
-                      <path
-                        fill-rule="evenodd"
-                        d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"
-                      /></svg
-                    >Previous
-                  </a>
+                      <span class="sr-only">Previous</span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        class="w-5 h-5 mr-2 bi bi-arrow-left"
+                        viewBox="0 0 16 16"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"
+                        /></svg
+                      >Previous
+                    </a>
+                    <% } %>
+                  </li>
+  
+                  <% for( let index = 1; index <= totalPage; index++ ) { %>
+                    <li>
+                      <a
+                        href="?page=<%= index %>"
+                        class="px-4 py-2 text-blue-600 border border-blue-600 rounded bg-blue-50 hover:text-white <%= page == index ? "active" : "" %>"
+                      >
+                        <%= index %>
+                      </a>
+                    </li>
                   <% } %>
-                </li>
-
-                <% for( let index = 1; index <= totalPage; index++ ) { %>
+                <% if (+page < +totalPage) { %>
                   <li>
                     <a
-                      href="?page=<%= index %>"
-                      class="px-4 py-2 text-blue-600 border border-blue-600 rounded bg-blue-50 hover:text-white <%= page == index ? "active" : "" %>"
+                      href="?page=<%= +page+1 %>"
+                      class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-white rounded hover:bg-gray-100"
                     >
-                      <%= index %>
+                      <span class="sr-only">Next</span>
+                      Next
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        class="w-5 h-5 ml-2 bi bi-arrow-right"
+                        viewBox="0 0 16 16"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"
+                        />
+                      </svg>
                     </a>
                   </li>
                 <% } %>
-              <% if (+page < +totalPage) { %>
-                <li>
-                  <a
-                    href="?page=<%= +page+1 %>"
-                    class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-white rounded hover:bg-gray-100"
-                  >
-                    <span class="sr-only">Next</span>
-                    Next
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      fill="currentColor"
-                      class="w-5 h-5 ml-2 bi bi-arrow-right"
-                      viewBox="0 0 16 16"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"
-                      />
-                    </svg>
-                  </a>
-                </li>
+                  
+                </ul>
               <% } %>
-                
-              </ul>
             </div>
           </div>
         </div>

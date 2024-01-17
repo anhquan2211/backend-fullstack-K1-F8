@@ -122,3 +122,13 @@ textarea::placeholder {
   color: rgb(37 99 235);
   border-color: rgb(37 99 235);
 }
+
+.email-to {
+  margin-left: 34px;
+}
+
+.trash-icon {
+  margin-right: 8px;
+  fill: rgb(218, 69, 69) !important;
+  cursor: pointer;
+}

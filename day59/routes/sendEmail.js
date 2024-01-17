@@ -9,4 +9,6 @@ router.post("/", SendEmailController.handleSendEmail);
 router.get("/history", SendEmailController.history);
 router.get("/history/:id", SendEmailController.historyDetail);
 
+router.post("/email-history/destroy/:id", SendEmailController.destroy);
+
 module.exports = router;
