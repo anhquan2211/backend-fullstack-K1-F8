@@ -18,6 +18,13 @@ router.post(
 
 router.get("/google/redirect", passport.authenticate("google"));
 
-router.get("/google/callback", passport.authenticate("google"));
+router.get(
+  "/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: "/login",
+    failureMessage: true,
+    successRedirect: "/",
+  })
+);
 
 module.exports = router;
